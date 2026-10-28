@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum ChatType {
+  direct
+  group
+}
+
+model User {
+  id           Int          @id @default(autoincrement())
+  fullName     String       @map("full_name") @db.VarChar(80)
+  email        String       @unique(map: "uq_users_email") @db.VarChar(120)
+  createdAt    DateTime     @default(now()) @map("created_at") @db.DateTime(6)
+  chatsCreated Chat[]       @relation("ChatCreator")
+  memberships  ChatMember[]
+
+  @@map("users")
+}
+
+model Chat {
+  id        Int          @id @default(autoincrement())
+  chatType  ChatType     @map("chat_type")
+  title     String?      @db.VarChar(80)
+  createdBy Int          @map("created_by")
+  directKey String?      @unique(map: "uq_chats_direct_key") @map("direct_key") @db.VarChar(40)
+  createdAt DateTime     @default(now()) @map("created_at") @db.DateTime(6)
+  creator   User         @relation("ChatCreator", fields: [createdBy], references: [id])
+  members   ChatMember[]
+
+  @@index([createdBy], map: "idx_chats_created_by")
+  @@map("chats")
+}
+
+model ChatMember {
+  id       Int      @id @default(autoincrement())
+  chatId   Int      @map("chat_id")
+  userId   Int      @map("user_id")
+  joinedAt DateTime @default(now()) @map("joined_at") @db.DateTime(6)
+  chat     Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@unique([chatId, userId], map: "uq_chat_member")
+  @@index([userId], map: "idx_chat_members_user")
+  @@map("chat_members")
+}

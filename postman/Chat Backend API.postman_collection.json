@@ -1,0 +1,384 @@
+{
+  "info": {
+    "name": "Chat Backend API",
+    "description": "Local chat API. Users and chats are in MySQL. Messages, read receipts and last seen are in Firestore. Select the Local environment before sending.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "jigneshId", "value": "5" },
+    { "key": "rahulId", "value": "6" },
+    { "key": "maheshId", "value": "7" },
+    { "key": "directChatId", "value": "3" },
+    { "key": "groupChatId", "value": "4" },
+    { "key": "jigneshMessageId", "value": "aw3lc7qYCLViFzIbgsne" },
+    { "key": "rahulMessageId", "value": "IDjgYLdQJTVoijTWd2w9" },
+    { "key": "groupMessageId", "value": "Qs1nAGsDHpJzRmaDdEkm" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create Jignesh",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.data && body.data.id) pm.collectionVariables.set('jigneshId', String(body.data.id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Jignesh\",\n  \"email\": \"jignesh@mail.com\"\n}"
+            },
+            "url": "{{baseUrl}}/user"
+          }
+        },
+        {
+          "name": "Create Rahul",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.data && body.data.id) pm.collectionVariables.set('rahulId', String(body.data.id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Rahul\",\n  \"email\": \"rahul@mail.com\"\n}"
+            },
+            "url": "{{baseUrl}}/user"
+          }
+        },
+        {
+          "name": "Create Mahesh",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.data && body.data.id) pm.collectionVariables.set('maheshId', String(body.data.id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Mahesh\",\n  \"email\": \"mahesh@mail.com\"\n}"
+            },
+            "url": "{{baseUrl}}/user"
+          }
+        },
+        {
+          "name": "All users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/user",
+            "description": "List users. Use an id from here on Create or get chat."
+          }
+        },
+        {
+          "name": "Get Jignesh",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/user/{{jigneshId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Direct chat",
+      "item": [
+        {
+          "name": "Create or get chat",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.data && body.data.chatId) pm.collectionVariables.set('directChatId', String(body.data.chatId));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userAId\": {{jigneshId}},\n  \"userBId\": {{rahulId}}\n}"
+            },
+            "url": "{{baseUrl}}/chat/create",
+            "description": "Create a direct chat, or return the existing one for the same two users."
+          }
+        },
+        {
+          "name": "Open direct chat",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/chat/{{directChatId}}"
+          }
+        },
+        {
+          "name": "Jignesh sends a message",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.data && body.data.messageId) pm.collectionVariables.set('jigneshMessageId', body.data.messageId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderId\": {{jigneshId}},\n  \"text\": \"Hi Rahul, this is Jignesh\"\n}"
+            },
+            "url": "{{baseUrl}}/chat/{{directChatId}}/message/send"
+          }
+        },
+        {
+          "name": "Rahul sends a message",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.data && body.data.messageId) pm.collectionVariables.set('rahulMessageId', body.data.messageId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderId\": {{rahulId}},\n  \"text\": \"Hello Jignesh\"\n}"
+            },
+            "url": "{{baseUrl}}/chat/{{directChatId}}/message/send"
+          }
+        },
+        {
+          "name": "Get messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chat/{{directChatId}}/messages?limit=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat", "{{directChatId}}", "messages"],
+              "query": [{ "key": "limit", "value": "50" }]
+            }
+          }
+        },
+        {
+          "name": "Rahul marks Jignesh message read",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{rahulId}}\n}"
+            },
+            "url": "{{baseUrl}}/chat/{{directChatId}}/message/{{jigneshMessageId}}/read"
+          }
+        },
+        {
+          "name": "Rahul updates last seen",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{rahulId}},\n  \"messageId\": \"{{rahulMessageId}}\"\n}"
+            },
+            "url": "{{baseUrl}}/chat/{{directChatId}}/lastseen"
+          }
+        },
+        {
+          "name": "Rahul edits his message",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderId\": {{rahulId}},\n  \"text\": \"Hello Jignesh, message edited\"\n}"
+            },
+            "url": "{{baseUrl}}/chat/{{directChatId}}/message/{{rahulMessageId}}"
+          }
+        },
+        {
+          "name": "Rahul deletes his message",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderId\": {{rahulId}}\n}"
+            },
+            "url": "{{baseUrl}}/chat/{{directChatId}}/message/{{rahulMessageId}}"
+          }
+        },
+        {
+          "name": "Jignesh chats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/user/{{jigneshId}}/chats"
+          }
+        },
+        {
+          "name": "Rahul chats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/user/{{rahulId}}/chats"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Group",
+      "item": [
+        {
+          "name": "Create group",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.data && body.data.chatId) pm.collectionVariables.set('groupChatId', String(body.data.chatId));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"creatorId\": {{jigneshId}},\n  \"title\": \"Project team\",\n  \"memberIds\": [{{rahulId}}]\n}"
+            },
+            "url": "{{baseUrl}}/chat/group"
+          }
+        },
+        {
+          "name": "Add Mahesh",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{maheshId}}\n}"
+            },
+            "url": "{{baseUrl}}/chat/{{groupChatId}}/members"
+          }
+        },
+        {
+          "name": "Mahesh sends a group message",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.data && body.data.messageId) pm.collectionVariables.set('groupMessageId', body.data.messageId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderId\": {{maheshId}},\n  \"text\": \"Mahesh joined the group\"\n}"
+            },
+            "url": "{{baseUrl}}/chat/{{groupChatId}}/message/send"
+          }
+        },
+        {
+          "name": "Group messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chat/{{groupChatId}}/messages?limit=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat", "{{groupChatId}}", "messages"],
+              "query": [{ "key": "limit", "value": "50" }]
+            }
+          }
+        },
+        {
+          "name": "Remove Mahesh",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/chat/{{groupChatId}}/members/{{maheshId}}"
+          }
+        },
+        {
+          "name": "Mahesh chats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/user/{{maheshId}}/chats"
+          }
+        }
+      ]
+    }
+  ]
+}
